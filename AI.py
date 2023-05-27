@@ -127,18 +127,6 @@ class ai_cog(commands.Cog):
         self.memory = " ".join(args)
         await ctx.channel.send("New memory : " + self.memory)
 
-    @commands.guild_only()
-    @commands.has_role('modérateur')
-    @commands.command(name="send")
-    async def send_message(self, ctx, destination_channel, *args):
-        message = " ".join(args)
-        channel_id = int(destination_channel.strip("<#").strip(">"))
-        channel = discord.utils.get(ctx.guild.text_channels, id=channel_id)
-        if channel is None:
-            await ctx.send("I couldn't find that channel.")
-            return
-        await channel.send(message)
-
     async def get_ai_message(self, prompt, temperature=1):
         params = {
             "model": "text-davinci-003",
@@ -150,7 +138,11 @@ class ai_cog(commands.Cog):
         async with aiohttp.ClientSession(headers={"Authorization": f"Bearer {self.api_key_ai}"}) as session:
             async with session.post(self.url_aniamte, json=params) as response:
                 response_json = await response.json()
-                return response_json['choices'][0]['text']
+                try:
+                    return response_json['choices'][0]['text']
+                except Exception as e:
+                    print("Error: ", e)
+                    return "Error while getting a message"
 
     async def get_ai_message_disccusion(self, conversation):
         params = {
