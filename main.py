@@ -9,7 +9,6 @@ from AI import ai_cog
 from leaders import leaderboard_cog
 import os
 import asyncio
-#test
 
 api_key_bot = str(os.environ['api_key_bot'])
 
@@ -31,6 +30,8 @@ async def on_ready():
     print('Logged in as :', bot.user.name)
     print('Bot ID :', bot.user.id)
     print('------')
+
+    await bot.get_cog('ai_cog').init_bot()
 
 
 @bot.event
@@ -67,7 +68,6 @@ async def help(ctx, key=None):
         embed.set_author(name='Liste des commandes de admin :')
         # Commandes
         embed.add_field(name=f"**{command_prefix}del x**", value="Suppression de x messages", inline=False)
-        embed.add_field(name=f"**{command_prefix}animate**", value="Une IA envoie un message toute les heures", inline=False)
         embed.add_field(name=f"**{command_prefix}new_prompt [phrase]**", value="Modifie le prompt, alias: np", inline=False)
         embed.add_field(name=f"**{command_prefix}set_memory [phrase]**", value="Modifie la memoire, alias: sm",
                         inline=False)
