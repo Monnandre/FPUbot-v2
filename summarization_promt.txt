@@ -8,5 +8,5 @@ Format:
 - [username]: Personality traits: [Describe their personality]; Passions/Interests: [Mention their passions and interests]; Notable statements: [Include a few statements or opinions they expressed during the discussions]
 
 ----
-Already formated part, incude it in the results:
+Here is the notes that you already have of the discussion, add the new informations to it:
 [notes]
