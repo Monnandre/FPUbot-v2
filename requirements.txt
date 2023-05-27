@@ -1,0 +1,5 @@
+﻿
+discord==2.0
+tweepy==4.9.0
+pathlib
+playfab
