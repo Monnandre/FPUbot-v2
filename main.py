@@ -9,7 +9,7 @@ from AI import ai_cog
 from leaders import leaderboard_cog
 import os
 import asyncio
-
+#test
 
 api_key_bot = str(os.environ['api_key_bot'])
 
