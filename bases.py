@@ -1,8 +1,10 @@
 
 from random import randint, choice
 from discord.ext import commands
+import discord
 from pathlib import Path
 import textwrap
+import asyncio
 
 
 class bases_cog(commands.Cog):
@@ -40,6 +42,38 @@ class bases_cog(commands.Cog):
     async def lancer(self, ctx, number: int):
         choix = randint(1, number)
         await ctx.channel.send(choix)
+
+    @commands.guild_only()
+    @commands.has_role('modérateur')
+    @commands.command(name="send", aliases=["s"])
+    async def send_message_as_bot(self, ctx, destination_channel, *args):
+        message = " ".join(args)
+        channel_id = int(destination_channel.strip("<#").strip(">"))
+        channel = discord.utils.get(ctx.guild.text_channels, id=channel_id)
+        if channel is None:
+            await ctx.send("I couldn't find that channel.")
+            return
+        await channel.send(message)
+
+    @commands.guild_only()
+    @commands.has_role('modérateur')
+    @commands.command(name="send_delayed", aliases=["sd"])
+    async def send_delayed_message_as_bot(self, ctx, destination_channel, delay, *args):
+        message = " ".join(args)
+        channel_id = int(destination_channel.strip("<#").strip(">"))
+        channel = discord.utils.get(ctx.guild.text_channels, id=channel_id)
+        if channel is None:
+            await ctx.send("I couldn't find that channel.")
+            return
+
+
+        try: delay = float(delay)
+        except:
+            await ctx.send("Wrong delay format. Send int or float in the form 1.0")
+            return
+
+        await asyncio.sleep(delay * 60)
+        await channel.send(message)
 
     @commands.command()
     async def test(self, ctx):
