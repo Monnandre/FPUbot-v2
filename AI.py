@@ -5,6 +5,7 @@ import pickle
 import discord, random, aiohttp
 from discord.ext import commands, tasks
 import os
+import glob
 import textwrap
 
 
@@ -71,13 +72,44 @@ class ai_cog(commands.Cog):
         # Split message into chunks of up to 2000 characters
         chunks = textwrap.wrap(respond, width=2000)
 
-        # Send each chunk as a separate message
-        for chunk in chunks:
-            await message.reply(chunk)
+        if type(message) == discord.Message:
+            # Send each chunk as a separate message
+            for chunk in chunks:
+                await message.reply(chunk)
+        else:
+            for chunk in chunks:
+                await message.send(chunk)
 
     def save_in_file(self, text, filename):
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf-8") as f:
             f.write(text)
+
+    def reformat_discussion(self, conversation, response):
+        reformated_string = "SYSTEM PROMPT: \n\n"
+        reformated_string += conversation[0]["content"]
+        reformated_string += "\n---------------------------------\n"
+        for message in conversation[1:]:
+            reformated_string += message["role"].upper() + ": \n\n"
+            reformated_string += message["content"]
+            reformated_string += "\n---------------------------------\n"
+
+        reformated_string += "GENERATED ANSWER: \n\n"
+        reformated_string += response
+
+
+        current_time = datetime.now() + timedelta(hours=2)
+        time_string = current_time.strftime("%Y%m%d_%H%M%S")
+
+        self.save_in_file(reformated_string, f"Logs/discussion_log_{time_string}.txt")
+
+        directory = '/Logs'
+        files = glob.glob(os.path.join(directory, '*'))
+        files.sort(key=os.path.getmtime)
+        print(len(files))
+
+        if len(files) > 9:
+            oldest_file = files[0]
+            os.remove(oldest_file)
 
     @tasks.loop(hours=6.87)
     async def loop(self):
@@ -114,6 +146,7 @@ class ai_cog(commands.Cog):
     @commands.has_role('modérateur')
     async def set_memory(self, ctx, *args):
         self.memory = " ".join(args)
+        self.save_in_file(self.memory, "memory.txt")
         await ctx.channel.send("New memory : " + self.memory)
 
     async def get_ai_message(self, prompt, temperature=1):
@@ -248,11 +281,11 @@ class ai_cog(commands.Cog):
                 user_name = user_mention.name
                 messages[i].content = messages[i].content.replace(user_mention.mention, user_name)
             messages[i] = messages[i].author.name.upper() + ": " + messages[i].content
-        concatenated_string = "\n\n".join(messages)
+        concatenated_string = "\n".join(messages)
 
         paris_time = datetime.utcnow() + timedelta(hours=2)
-        formatted_datetime = paris_time.strftime("%H:%M %B %d, %Y ")
-        conversation = [{"role": "system", "content": self.conversation_prompt.replace("[brain]", self.memory).replace("[messages]", concatenated_string).replace("[name]", message.author.name).replace("[time]", formatted_datetime)}]
+        formatted_datetime = paris_time.strftime("%d %B %Y and the time is %H:%M")
+        conversation = [{"role": "system", "content": self.conversation_prompt.replace("[brain]", self.memory).replace("[messages]", concatenated_string).replace("[time]", formatted_datetime)}]
 
         async with message.channel.typing():
             try:
@@ -267,17 +300,18 @@ class ai_cog(commands.Cog):
                             for user_mention in original_question.mentions:
                                 user_name = user_mention.name
                                 original_question.content = original_question.content.replace(user_mention.mention, user_name)
-                            conversation.append({"role": "user", "content": original_question.content})
+                            conversation.append({"role": "user", "content": original_question.author.name.upper()+ ": " + original_question.content})
 
-                        conversation.append({"role": "assistant", "content": replied_message.content})
+                        conversation.append({"role": "assistant", "content": replied_message.author.name.upper()+ ": " + replied_message.content})
 
-                conversation.append({"role": "user", "content": message.content})  # juste give the user's prompt
+                conversation.append({"role": "user", "content": message.author.name.upper()+ ": " + message.content + "\n\nFPU: "})  # juste give the user's prompt
 
                 respond = await self.get_ai_message_disccusion(conversation)
             except Exception as e:
                 print("ERROR: ", e)
                 respond = "Une erreur est survenue..."
             await self.send_long_message(message, respond)
+            self.reformat_discussion(conversation, respond)
 
     async def update_bot_memory(self):
         messages = [message async for message in self.channel.history(limit=10)]
@@ -291,7 +325,7 @@ class ai_cog(commands.Cog):
 
         concatenated_string = "\n\n".join(messages)
         conversation = [{"role": "system", "content": self.summ_prompt.replace("[notes]", self.memory)}]
-        conversation.append({"role": "user", "content": "Here is the continuation of the discord discussion: \n\n" + concatenated_string})
+        conversation.append({"role": "user", "content": "Your job is to create a concise summaries of a discord discussion. Include previous notes in the result, even if the users are not mentionned in this part of the discussion.\n----------------\nHere is the continuation of the discord discussion: \n\n" + concatenated_string})
 
         memory = await self.get_ai_message_disccusion(conversation)
         if memory != "Je n'ai pas réussis à obtenir une réponse avec ma boule de cristal...":
@@ -303,4 +337,4 @@ class ai_cog(commands.Cog):
             return
 
         self.save_in_file(self.memory, "memory.txt")
-        await self.admin.send("\n\n-------Memory UPDATE-------: \n\n" + self.memory)
+        await self.send_long_message(self.admin, "\n\n-------Memory UPDATE-------: \n\n" + self.memory)
