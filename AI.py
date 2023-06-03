@@ -52,7 +52,7 @@ class ai_cog(commands.Cog):
     async def init_bot(self):
         self.channel = self.bot.get_channel(1082353013492043829)
         self.admin = await self.bot.fetch_user(688056403927236697)
-        #self.loop.start()
+        self.loop.start()
 
         with open("memory.txt", "r") as f:
             self.memory = f.read()
@@ -74,7 +74,7 @@ class ai_cog(commands.Cog):
 
     async def send_long_message(self, place, respond):
         # Split message into chunks of up to 2000 characters
-        chunks = textwrap.wrap(respond, width=2000)
+        chunks = textwrap.wrap(respond, width=2000, replace_whitespace=False)
 
         if type(place) == discord.Message:
             # Send each chunk as a separate message
@@ -181,6 +181,7 @@ class ai_cog(commands.Cog):
             async with session.post(self.url, json=params) as response:
                 response_json = await response.json()
                 if 'choices' in response_json:
+                    print(response_json['choices'][0]['message']["content"])
                     return response_json['choices'][0]['message']["content"]
                 else:
                     print("ERROR: ", response_json)
@@ -318,12 +319,6 @@ class ai_cog(commands.Cog):
                 respond = "Une erreur est survenue..."
             await self.send_long_message(message, respond)
             self.reformat_discussion(conversation, respond)
-
-    @commands.guild_only()
-    @commands.has_role('modérateur')
-    @commands.command(aliases=["um"])
-    async def update_memory(self, ctx):
-        await self.update_bot_memory()
 
     async def update_bot_memory(self):
         messages = [message async for message in self.channel.history(limit=20)]

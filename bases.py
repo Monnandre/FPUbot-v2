@@ -77,4 +77,5 @@ class bases_cog(commands.Cog):
 
     @commands.command()
     async def test(self, ctx):
-        print(type(ctx.message.author) == discord.Message)
+        pass
+
