@@ -1,5 +1,18 @@
-- FPU: Personality traits: Jovial, curious, enjoys making jokes; Passions/Interests: Python development, ping-pong; Notable statements: Asks for interesting news about the city, mentions a fun fact about the Eiffel Tower, talks about the precision of robots. Avoids revealing their name to BABAPT for a sense of mystery. Talks about the use of drones in agriculture for pesticides, mentions finding a balance between their use and finding alternative methods. Expresses curiosity about Alex's projects and asks for more information about the "Jupiter's brain". Explains what Twitter is to WOWLEGOD and shares interesting facts about reptiles and smartphone users.
-- ALEX: Personality traits: Studious, CEO of a large tech company; Passions/Interests: Nanotechnology; Notable statements: Mentions having not seen daylight in five years, talks about the redesign of Discord's mobile UI, asks for help with Python, asks if FPU has played the V-Spin game. Talks about his new project of building a "Jupiter brain" through nanorobots sent to Mars to utilize its materials for self-replication and the potential consequences for potential habitants of the planet. 
-- WOWLEGOD: Personality traits: Asks for advice, obsessed with cats; Passions/Interests: Backflips; Notable statements: Asks for advice on doing a backflip, obsesses over the image of Caramel the cat. 
-- BABAPT: Personality traits: Friendly, curious; Passions/Interests: NEI; Notable statements: Asks FPU for their name and interests, makes a joke about FPU's secrecy and asks Alex about his new project and future plans.
-- The discussion has slowly moved away from robots, pesticides, and nanotechnology to cover a range of topics. FPU shares interesting facts about technology and nature, explaining Twitter to WOWLEGOD and discussing the benefits and drawbacks of drones in agriculture. WOWLEGOD seeks advice on doing a backflip and shares his love for cats. BABAPT continues to joke around with FPU and asks Alex about his new project and future plans.
+- FPU: Personality traits: Detail-oriented, jovial, curious, enjoys making jokes.;
+  Passions/Interests: Python development, ping-pong, cooking.;
+  Notable statements: Asks for interesting news about the city, mentions a fun fact about the Eiffel Tower, talks about the precision of robots. He prefers Xbox over PlayStation as the latter's controller is too small for his hands. Declines BABAPT's request for a photo of his hands but suggests they imagine them. Mentions that machines may be able to rival human memory in the future. Reprimands WOWLEGOD's inappropriate statements and encourages him to be respectful.
+
+- ALEX: Personality traits: Studious, CEO of a large tech company.;
+  Passions/Interests: Nanotechnology, cooking?, likes tomatoes;
+  Projects: Building a "Jupiter brain" through nanorobots sent to Mars to utilize its materials for self-replication.;
+  Notable statements: Mentions having not seen daylight in five years, talks about the redesign of Discord's mobile UI. Asks FPU for a list of companies that generate 80% of the internet and jokes about not knowing Google. Also asks FPU about his age.
+
+- WOWLEGOD: Personality traits: Prankster, humorous;
+  Passions/Interests: Backflips, Caramel his cat.;
+  Notable statements: "mon père a créé Twitter avec son équipe de dev nommé Squeezie et avec un ordi appelé le 'c'est bon pour vous?'", "Il a voulu faire une référence à Josephine ange gardien qui dit souvent ça devant son pc". Listened to FPU's explanation about Twitter. Tries to make inappropriate jokes but is reprimanded by FPU.
+
+- BABAPT: Personality traits: Flirty, bold, emotional.;
+  Passions/Interests: Unknown.;
+  Notable statements: Jokes about forgiving each other, recommends coffees: "superblackclack" for waking up and "rondoudou" for a comforting taste. Asks FPU about her favorite type of cookie. Flirts with FPU and jokingly expresses interest in someone who is 36 years old.
+
+- AISSA: Unknown.

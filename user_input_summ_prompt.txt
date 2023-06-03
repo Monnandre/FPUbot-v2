@@ -1,0 +1,10 @@
+I will give you the last 20 messages of a discussion and the informations that i already have about it.
+Your jobs is to summurize the discussion to get the informations about the participants.
+You will add this new informations to the already existing ones and send me the result.
+
+Here is the notes that I already have:
+[notes]
+
+----
+Here is the last 20 messages of the discussion:
+[messages]

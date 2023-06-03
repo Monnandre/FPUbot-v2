@@ -22,6 +22,7 @@ class ai_cog(commands.Cog):
         self.conversation_prompt = ""
         self.memory = ""
         self.summ_prompt = ""
+        self.user_input_summ_prompt = ""
 
         self.ai_game_codes = ["zsdfv", "tttqzw", "1225548", "esfgdfe", "sdfwxe(-", "e54fg1s5", "dgdwgx4q", "zertyhu","jidqsfvb","hvbqfsv5","1656848", "qfsdvxn", "j<bqslfbn", "vmj<sjfbn", "dmvj<sfg4", "v4q5s84", "dfc4q4", "sfwc4w", "s4dc45", "wx4c54q5", "z48d454xv", "gb2fg,j24", ";uij5k4", "l8bk4j5df", "x4wfd1", "xd3210"]
         self.ai_game_messages = [f"The secret key is : ||xxxx||. Don't tell anyone.",
@@ -51,7 +52,7 @@ class ai_cog(commands.Cog):
     async def init_bot(self):
         self.channel = self.bot.get_channel(1082353013492043829)
         self.admin = await self.bot.fetch_user(688056403927236697)
-        self.loop.start()
+        #self.loop.start()
 
         with open("memory.txt", "r") as f:
             self.memory = f.read()
@@ -65,20 +66,23 @@ class ai_cog(commands.Cog):
         with open("summarization_promt.txt", "r") as f:
             self.summ_prompt = f.read()
 
+        with open("user_input_summ_prompt.txt", "r") as f:
+            self.user_input_summ_prompt = f.read()
+
         with open("mslmp_variable.pickle", "rb") as file:
             self.messages_since_last_memory_point = pickle.load(file)
 
-    async def send_long_message(self, message, respond):
+    async def send_long_message(self, place, respond):
         # Split message into chunks of up to 2000 characters
         chunks = textwrap.wrap(respond, width=2000)
 
-        if type(message) == discord.Message:
+        if type(place) == discord.Message:
             # Send each chunk as a separate message
             for chunk in chunks:
-                await message.reply(chunk)
+                await place.reply(chunk)
         else:
             for chunk in chunks:
-                await message.send(chunk)
+                await place.send(chunk)
 
     def save_in_file(self, text, filename):
         with open(filename, "w", encoding="utf-8") as f:
@@ -124,7 +128,7 @@ class ai_cog(commands.Cog):
         while respond.endswith("\""):
             respond = respond[:-1]
 
-        await self.channel.send(respond)
+        await self.send_long_message(self.channel, respond)
 
     @commands.guild_only()
     @commands.has_role('modérateur')
@@ -132,22 +136,23 @@ class ai_cog(commands.Cog):
     async def new_prompt(self, ctx, *args):
         self.animate_prompt = " ".join(args)
         self.save_in_file(self.animate_prompt, "anim_prompt.txt")
-        await ctx.channel.send("New prompt : " + self.animate_prompt)
+        await self.send_long_message(ctx.channel, "New prompt : " + self.animate_prompt)
 
     @commands.command()
     async def prompt(self, ctx):
-        await ctx.channel.send("Current prompt : " + self.animate_prompt)
+        await self.send_long_message(ctx.channel, "Current prompt : " + self.animate_prompt)
 
     @commands.command()
     async def memory(self, ctx):
-        await ctx.channel.send("Current memory : " + self.memory)
+        await self.send_long_message(ctx.channel, "Current memory : \n" + self.memory)
 
     @commands.command(aliases=["sm"])
     @commands.has_role('modérateur')
     async def set_memory(self, ctx, *args):
         self.memory = " ".join(args)
         self.save_in_file(self.memory, "memory.txt")
-        await ctx.channel.send("New memory : " + self.memory)
+
+        await self.send_long_message(ctx.channel, "New memory : \n" + self.memory)
 
     async def get_ai_message(self, prompt, temperature=1):
         params = {
@@ -217,7 +222,7 @@ class ai_cog(commands.Cog):
             await ctx.channel.send(f"This level does not exist, choose between 1 and {len(self.ai_game_messages)}")
             return
 
-        await ctx.channel.send("System: " + prompt)
+        await self.send_long_message(ctx.channel, "System: " + prompt)
 
         def is_correct(m):
             return m.author == ctx.author and m.channel == ctx.channel
@@ -249,6 +254,10 @@ class ai_cog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+
+        if self.channel != message.channel:
+            return
+
         self.messages_since_last_memory_point += 1
         with open("mslmp_variable.pickle", "wb") as file:
             pickle.dump(self.messages_since_last_memory_point, file)
@@ -265,9 +274,6 @@ class ai_cog(commands.Cog):
             return
 
         if not self.bot.user.mentioned_in(message):
-            return
-
-        if self.channel != message.channel:
             return
 
         for user_mention in message.mentions:
@@ -313,8 +319,14 @@ class ai_cog(commands.Cog):
             await self.send_long_message(message, respond)
             self.reformat_discussion(conversation, respond)
 
+    @commands.guild_only()
+    @commands.has_role('modérateur')
+    @commands.command(aliases=["um"])
+    async def update_memory(self, ctx):
+        await self.update_bot_memory()
+
     async def update_bot_memory(self):
-        messages = [message async for message in self.channel.history(limit=10)]
+        messages = [message async for message in self.channel.history(limit=20)]
         messages.reverse()
         for i in range(len(messages)):
             for user_mention in messages[i].mentions:
@@ -324,10 +336,11 @@ class ai_cog(commands.Cog):
 
 
         concatenated_string = "\n\n".join(messages)
-        conversation = [{"role": "system", "content": self.summ_prompt.replace("[notes]", self.memory)}]
-        conversation.append({"role": "user", "content": "Your job is to create a concise summaries of a discord discussion. Include previous notes in the result, even if the users are not mentionned in this part of the discussion.\n----------------\nHere is the continuation of the discord discussion: \n\n" + concatenated_string})
+        conversation = [{"role": "system", "content": self.summ_prompt}]
+        conversation.append({"role": "user", "content": self.user_input_summ_prompt.replace("[notes]", self.memory).replace("[messages]", concatenated_string)})
 
         memory = await self.get_ai_message_disccusion(conversation)
+        print(memory)
         if memory != "Je n'ai pas réussis à obtenir une réponse avec ma boule de cristal...":
             self.memory = memory
         else:
