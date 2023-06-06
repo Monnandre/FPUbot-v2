@@ -77,5 +77,4 @@ class bases_cog(commands.Cog):
 
     @commands.command()
     async def test(self, ctx):
-        pass
-
+        await ctx.send("Message envoyé à " + str(ctx.message.created_at) + " (UTC)")

@@ -52,7 +52,7 @@ class ai_cog(commands.Cog):
     async def init_bot(self):
         self.channel = self.bot.get_channel(1082353013492043829)
         self.admin = await self.bot.fetch_user(688056403927236697)
-        self.loop.start()
+        #self.loop.start()
 
         with open("memory.txt", "r") as f:
             self.memory = f.read()
@@ -102,16 +102,16 @@ class ai_cog(commands.Cog):
 
 
         current_time = datetime.now() + timedelta(hours=2)
-        time_string = current_time.strftime("%Y%m%d_%H%M%S")
+        time_string = current_time.strftime("%Y%m%d_%H%M")
 
         self.save_in_file(reformated_string, f"Logs/discussion_log_{time_string}.txt")
 
-        directory = '/Logs'
+        directory = 'Logs'
         files = glob.glob(os.path.join(directory, '*'))
         files.sort(key=os.path.getmtime)
         print(len(files))
 
-        if len(files) > 9:
+        if len(files) > 20:
             oldest_file = files[0]
             os.remove(oldest_file)
 
@@ -181,7 +181,6 @@ class ai_cog(commands.Cog):
             async with session.post(self.url, json=params) as response:
                 response_json = await response.json()
                 if 'choices' in response_json:
-                    print(response_json['choices'][0]['message']["content"])
                     return response_json['choices'][0]['message']["content"]
                 else:
                     print("ERROR: ", response_json)
@@ -281,18 +280,16 @@ class ai_cog(commands.Cog):
             user_name = user_mention.name
             message.content = message.content.replace(user_mention.mention, user_name)
 
-        messages = [message async for message in self.channel.history(limit=10)]
-        messages.reverse()
-        for i in range(len(messages)):
-            for user_mention in messages[i].mentions:
-                user_name = user_mention.name
-                messages[i].content = messages[i].content.replace(user_mention.mention, user_name)
-            messages[i] = messages[i].author.name.upper() + ": " + messages[i].content
-        concatenated_string = "\n".join(messages)
-
+        concatenated_string = await self.get_messages_history(self.channel, 10)
         paris_time = datetime.utcnow() + timedelta(hours=2)
         formatted_datetime = paris_time.strftime("%d %B %Y and the time is %H:%M")
-        conversation = [{"role": "system", "content": self.conversation_prompt.replace("[brain]", self.memory).replace("[messages]", concatenated_string).replace("[time]", formatted_datetime)}]
+
+        system_prompt = self.conversation_prompt.replace("[brain]", self.memory)
+        system_prompt = system_prompt.replace("[messages]", concatenated_string)
+        system_prompt = system_prompt.replace("[time]", formatted_datetime)
+        system_prompt = system_prompt.replace("[members]", ", ".join([member.name.upper() for member in message.guild.members]))
+
+        conversation = [{"role": "system", "content": system_prompt}]
 
         async with message.channel.typing():
             try:
@@ -320,17 +317,21 @@ class ai_cog(commands.Cog):
             await self.send_long_message(message, respond)
             self.reformat_discussion(conversation, respond)
 
-    async def update_bot_memory(self):
-        messages = [message async for message in self.channel.history(limit=20)]
+    async def get_messages_history(self, channel, limit=5):
+        messages = [message async for message in channel.history(limit=limit)]
         messages.reverse()
         for i in range(len(messages)):
             for user_mention in messages[i].mentions:
                 user_name = user_mention.name
                 messages[i].content = messages[i].content.replace(user_mention.mention, user_name)
-            messages[i] = messages[i].author.name.upper() + ": " + messages[i].content
 
+            time_created_at = messages[i].created_at + timedelta(hours=2)
+            time_created_at = time_created_at.strftime("%d-%m-%Y %H:%M")
+            messages[i] = time_created_at + "--> " + messages[i].author.name.upper() + ": " + messages[i].content
+        return "\n".join(messages)
 
-        concatenated_string = "\n\n".join(messages)
+    async def update_bot_memory(self):
+        concatenated_string = await self.get_messages_history(self.channel, 20)
         conversation = [{"role": "system", "content": self.summ_prompt}]
         conversation.append({"role": "user", "content": self.user_input_summ_prompt.replace("[notes]", self.memory).replace("[messages]", concatenated_string)})
 

@@ -1,5 +1,5 @@
 
-
+from keep_alive import keep_alive
 import discord
 from discord.ext import commands
 from tweeter import tweeter_cog
@@ -10,6 +10,7 @@ from leaders import leaderboard_cog
 import os
 import asyncio
 
+keep_alive()
 api_key_bot = str(os.environ['api_key_bot'])
 
 command_prefix = "!"
