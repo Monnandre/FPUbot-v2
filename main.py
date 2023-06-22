@@ -33,6 +33,7 @@ async def on_ready():
     print('------')
 
     await bot.get_cog('ai_cog').init_bot()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='ahh_lex'))
 
 
 @bot.event

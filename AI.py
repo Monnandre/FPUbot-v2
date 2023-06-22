@@ -252,6 +252,22 @@ class ai_cog(commands.Cog):
             await ai_message.delete()
             await guess.delete()
 
+    async def check_bot_update_memory(self):
+        with open("mslmp_variable.pickle", "wb") as file:
+            pickle.dump(self.messages_since_last_memory_point, file)
+        if self.messages_since_last_memory_point >= 20:
+            self.messages_since_last_memory_point = 0
+            with open("mslmp_variable.pickle", "wb") as file:
+                pickle.dump(self.messages_since_last_memory_point, file)
+
+            # Set a custom status
+            emoji = '⌛'  # Custom emoji
+            text = 'Memory Update'  # Custom text
+            activity = discord.Activity(type=discord.ActivityType.custom, name=f'{emoji} {text}')
+            await self.bot.change_presence(activity=activity)
+            await self.update_bot_memory()
+            await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='ahh_lex'))
+
     @commands.Cog.listener()
     async def on_message(self, message):
 
@@ -259,21 +275,17 @@ class ai_cog(commands.Cog):
             return
 
         self.messages_since_last_memory_point += 1
-        with open("mslmp_variable.pickle", "wb") as file:
-            pickle.dump(self.messages_since_last_memory_point, file)
-        if self.messages_since_last_memory_point >= 20:
-            self.messages_since_last_memory_point = 0
-            with open("mslmp_variable.pickle", "wb") as file:
-                pickle.dump(self.messages_since_last_memory_point, file)
-            await self.update_bot_memory()
 
         if message.author == self.bot.user:
+            await self.check_bot_update_memory()
             return
 
         if message.mention_everyone:
+            await self.check_bot_update_memory()
             return
 
         if not self.bot.user.mentioned_in(message):
+            await self.check_bot_update_memory()
             return
 
         for user_mention in message.mentions:
@@ -315,7 +327,8 @@ class ai_cog(commands.Cog):
                 print("ERROR: ", e)
                 respond = "Une erreur est survenue..."
             await self.send_long_message(message, respond)
-            self.reformat_discussion(conversation, respond)
+        self.reformat_discussion(conversation, respond)
+        await self.check_bot_update_memory()
 
     async def get_messages_history(self, channel, limit=5):
         messages = [message async for message in channel.history(limit=limit)]
