@@ -8,6 +8,8 @@ import os
 import glob
 import textwrap
 
+from gifs import get_gif_url, find_gif_keywords
+
 
 class ai_cog(commands.Cog):
     def __init__(self, bot):
@@ -72,14 +74,27 @@ class ai_cog(commands.Cog):
         with open("mslmp_variable.pickle", "rb") as file:
             self.messages_since_last_memory_point = pickle.load(file)
 
-    async def send_long_message(self, place, respond):
+    async def send_long_message(self, place, respond, url_info=[]):
         # Split message into chunks of up to 2000 characters
         chunks = textwrap.wrap(respond, width=2000, replace_whitespace=False)
 
         if type(place) == discord.Message:
+            url_sent = False
             # Send each chunk as a separate message
             for chunk in chunks:
-                await place.reply(chunk)
+                if url_info and not url_sent:
+                    url_sent = True
+                    embed = discord.Embed(colour=discord.Colour.random(), title=url_info[1])
+                    embed.set_image(
+                        url=url_info[0])
+                    await place.reply(chunk, embed=embed)
+                else:
+                    await place.reply(chunk)
+            if url_info:
+                embed = discord.Embed(colour=discord.Colour.random(), title=url_info[1])
+                embed.set_image(
+                    url=url_info[0])
+                await place.reply(embed=embed)
         else:
             for chunk in chunks:
                 await place.send(chunk)
@@ -326,7 +341,14 @@ class ai_cog(commands.Cog):
             except Exception as e:
                 print("ERROR: ", e)
                 respond = "Une erreur est survenue..."
-            await self.send_long_message(message, respond)
+
+            respond, keywords = find_gif_keywords(respond)
+            print(keywords)
+            if keywords is None:
+                await self.send_long_message(message, respond)
+            else:
+                url = await get_gif_url(keywords)
+                await self.send_long_message(message, respond, url_info=(url, keywords))
         self.reformat_discussion(conversation, respond)
         await self.check_bot_update_memory()
 

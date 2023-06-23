@@ -2,7 +2,6 @@
 from keep_alive import keep_alive
 import discord
 from discord.ext import commands
-from tweeter import tweeter_cog
 from bases import bases_cog
 from addons import addons_cog
 from AI import ai_cog
@@ -19,7 +18,6 @@ bot = commands.Bot(command_prefix=command_prefix, intents=intents)
 bot.remove_command('help')
 
 async def setup():
-    await bot.add_cog(tweeter_cog(bot))
     await bot.add_cog(bases_cog(bot))
     await bot.add_cog(addons_cog(bot))
     await bot.add_cog(ai_cog(bot))
@@ -50,21 +48,11 @@ async def help(ctx, key=None):
         embed.set_author(name='Liste des commandes de bases :')
         # Commandes User
         embed.add_field(name=f"**{command_prefix}help admin**", value="Commandes Admin", inline=False)
-        embed.add_field(name=f"**{command_prefix}help twitter**", value="Commandes Twitter", inline=False)
         embed.add_field(name=f"**{command_prefix}ping**", value="Mesurer la latence", inline=False)
         embed.add_field(name=f"**{command_prefix}piece**", value="Pile ou face", inline=False)
         embed.add_field(name=f"**{command_prefix}random x**", value="Choisir un nombre entre 1 et x, alias: r", inline=False)
         embed.add_field(name=f"**{command_prefix}test**", value="Un truc random en fonction de ce que je suis entrain de tester", inline=False)
         embed.add_field(name=f"**{command_prefix}lb name**", value="Renvoie le leaderboard de V-Spin. Possibilites: les noms des modes de jeu (avec une majuscule), Coins et Time", inline=False)
-
-    elif key == "twitter":
-        embed.set_author(name='Liste des commandes de twitter :')
-        # Commandes
-        embed.add_field(name=f"**{command_prefix}games**", value="Xbox", inline=False)
-        embed.add_field(name=f"**{command_prefix}films**", value="Netfix", inline=False)
-        embed.add_field(name=f"**{command_prefix}find name**", value="Trouver quelqu'un", inline=False)
-        embed.add_field(name=f"**{command_prefix}tweet x [keywords]**", value="Trouver un tweet", inline=False)
-        embed.add_field(name=f"**{command_prefix}trend n**", value="Connaitre le top n trends de Marseille", inline=False)
 
     elif key == "admin":
         embed.set_author(name='Liste des commandes de admin :')

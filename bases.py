@@ -3,7 +3,6 @@ from random import randint, choice
 from discord.ext import commands
 import discord
 from pathlib import Path
-import textwrap
 import asyncio
 
 
@@ -75,6 +74,10 @@ class bases_cog(commands.Cog):
         await asyncio.sleep(delay * 60)
         await channel.send(message)
 
+
     @commands.command()
-    async def test(self, ctx):
-        await ctx.send("Message envoyé à " + str(ctx.message.created_at) + " (UTC)")
+    async def test(self, ctx, *keywords):
+        embed = discord.Embed()
+        embed.title = " ".join(keywords)
+        embed.set_image(url="https://media2.giphy.com/media/sRygwfEwvMj9E6Ot6D/giphy.gif?cid=6ab86e1558wb51hemdwy2nlaq6q8cdoi8y0uvbliy4aj3o9c&ep=v1_gifs_search&rid=giphy.gif&ct=g")
+        await ctx.send(embed=embed)

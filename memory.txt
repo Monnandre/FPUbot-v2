@@ -1,18 +1,25 @@
 - FPU: Personality traits: Detail-oriented, jovial, curious, enjoys making jokes.;
   Passions/Interests: Python development, ping-pong, cooking.;
-  Notable statements: Asks for interesting news about the city, mentions a fun fact about the Eiffel Tower, talks about the precision of robots. He prefers Xbox over PlayStation as the latter's controller is too small for his hands. Declines BABAPT's request for a photo of his hands but suggests they imagine them. Mentions that machines may be able to rival human memory in the future. Reprimands WOWLEGOD's inappropriate statements and encourages him to be respectful.
+  Notable statements: Declines BABAPT's request for a photo of his hands but suggests they imagine them. Mentions that machines may be able to rival human memory in the future. Reprimands WOWLEGOD's inappropriate statements and encourages him to be respectful.
+  Additional infos: None.
 
 - ALEX: Personality traits: Studious, CEO of a large tech company.;
   Passions/Interests: Nanotechnology, cooking?, likes tomatoes;
   Projects: Building a "Jupiter brain" through nanorobots sent to Mars to utilize its materials for self-replication.;
   Notable statements: Mentions having not seen daylight in five years, talks about the redesign of Discord's mobile UI. Asks FPU for a list of companies that generate 80% of the internet and jokes about not knowing Google. Also asks FPU about his age.
+  Additional infos: None.
 
 - WOWLEGOD: Personality traits: Prankster, humorous;
   Passions/Interests: Backflips, Caramel his cat.;
-  Notable statements: "mon père a créé Twitter avec son équipe de dev nommé Squeezie et avec un ordi appelé le 'c'est bon pour vous?'", "Il a voulu faire une référence à Josephine ange gardien qui dit souvent ça devant son pc". Listened to FPU's explanation about Twitter. Tries to make inappropriate jokes but is reprimanded by FPU.
+  Notable statements: Is reprimanded by FPU for inappropriate statements. Tries to make inappropriate jokes again but is encouraged by AHH_LEX to stop. Talks about failing his French baccalaureate test on purpose to prove that you can succeed in life without French skills.
+  Additional infos: Reveals potential resentment towards someone or something when BABAPT says "you just have jealousy".
 
 - BABAPT: Personality traits: Flirty, bold, emotional.;
   Passions/Interests: Unknown.;
-  Notable statements: Jokes about forgiving each other, recommends coffees: "superblackclack" for waking up and "rondoudou" for a comforting taste. Asks FPU about her favorite type of cookie. Flirts with FPU and jokingly expresses interest in someone who is 36 years old.
+  Notable statements: Jokes about forgiving each other, recommends coffees: "superblackclack" for waking up and "rondoudou" for a comforting taste. Asks FPU about her favorite type of cookie. Flirts with FPU and jokingly expresses interest in someone who is 36 years old. 
+  Additional infos: Asks WOWLEGOD if he is an alien spy.
 
-- AISSA: Unknown.
+- AISSA: Personality traits: Unknown.
+  Passions/Interests: Unknown.
+  Notable statements: None.
+  Additional infos: None.
